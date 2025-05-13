@@ -1,4 +1,13 @@
 import { createApp } from 'vue'
 import App from './App.vue'
+import './css/styles.css'
 
-createApp(App).mount('#app')
+const app = createApp(App)
+
+app.directive('focus', {
+  mounted(el) {
+    el.focus()
+  }
+})
+
+app.mount('#app')
