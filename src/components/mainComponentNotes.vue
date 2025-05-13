@@ -72,12 +72,18 @@
             </div>
                     <div v-for="proj in projects" :key="`name_${proj}`" class="project-container">
                         <div v-if="proj == project" class="project">
-                          <NoteCard 
-                            :text="proj"
-                            :project="getFilteredProject(proj)"
-                            @delete-note="deleteNote"
-                            @updateNote="handleUpdate"
-                          />
+                          <span class="projects-title">{{ proj }}</span>
+                          <div class="note-container">
+                          <div v-for="note in getFilteredProject(proj)" :key="note.index" class="note-main">
+                            <NoteCard 
+                              v-model="note.title"
+                              :index="note.index"
+                              :color="note.color"
+                              @delete-note="deleteNote"
+                              @updateNote="handleUpdate"
+                            />
+                          </div>
+                        </div>
                         </div>
                     </div>
                 </div>
@@ -157,7 +163,6 @@ export default {
     },
     addNote() {
       const index = (new Date()).getTime().toString(36);
-      console.log(this.userData)
       this.userData.notes.push({
         index: index,
         title: this.text,
