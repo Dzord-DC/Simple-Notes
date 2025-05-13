@@ -124,6 +124,13 @@ button:disabled {
 .project-title::first-letter {
     text-transform: uppercase;
 }
+.note-container {
+    display: flex;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+    margin: 16px;
+    position: relative;
+}
 .note-input {
     width: 200px;
     height: 28px;

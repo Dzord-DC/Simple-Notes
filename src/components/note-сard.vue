@@ -1,54 +1,57 @@
 <template>
-        <span class="projects-title">{{ text }}</span>
+        
         <div class="note-container">
-            <div v-for="note in project" :key="note.index" class="note-main">
-                <div class="note" :style="{'background-color': note.color}">
+                <div class="note" :style="{'background-color': color}">
                     <input
                         class="delete-btn" 
                         type="button" 
                         value="×" 
-                        @click="deleteHendler(note.index)"
+                        @click="deleteHendler(index)"
                     />
                     
                     <div 
-                        v-if="note.title && note.index !== isEditingIndex"
+                        v-if="modelValue && index !== isEditingIndex"
                         class="note-text"
                         @dblclick="startEditing(note)"
                     >
-                        {{ note.title }}
+                        {{ modelValue }}
                     </div>
                     <textarea
-                        v-else-if="isEditingIndex == note.index"
+                        v-else-if="isEditingIndex == index"
                         type="text"
-                        v-model="note.title"
-                        @blur="stopEditing(note)"
-                        @keyup.enter.prevent="stopEditing(note)"
-                        @keyup.escape="cancelEditing(note)"
+                        :value="modelValue"
+                        @blur="stopEditing"
+                        @keyup.enter.prevent="stopEditing"
+                        @keyup.escape="cancelEditing"
                         v-focus
                         class="cnt"
                         maxlength='250'
                         placeholder="Enter note description here"
+                        @input="$emit('update:modelValue', $event.target.value.trim())"
                     />
                     <span 
                         v-else
-                        @click="startEditing(note)"
+                        @click="startEditing"
                         >
-                        {{ note.title }}
+                        {{ modelValue }}
                         <span class="edit-icon">✏️</span>
                     </span>
                     
                 </div>
-            </div>
         </div>
 </template>
 <script>
 export default {
   name: "note-сard",
   props: {
-    project: Array,
-    text: String,
+    modelValue: {
+      type: String,
+      default: ''
+    },
+    index: String,
+    color: String,
   },
-  emits: ['deleteNote', 'updateNote'],
+  emits: ['deleteNote', 'updateNote', 'update:modelValue'],
   data() {
         return {
             isEditingIndex: "",
@@ -59,35 +62,23 @@ export default {
         deleteHendler(id) {
             this.$emit("deleteNote", id);
         },
-        startEditing(note) {
-            this.originalTitle = note.title;
-            this.isEditingIndex = note.index;
+        startEditing() {
+            this.originalTitle = this.modelValue;
+            this.isEditingIndex = this.index;
         },
-        stopEditing(note) {
+        stopEditing() {
             this.isEditingIndex = "";
-            note.title= note.title.trim();
-            this.$emit("updateNote", {
-                id: note.index,
-                newTitle: note.title
-            });
+            //note.title= note.title.trim();
+            this.$emit("updateNote");
         },
-        cancelEditing(note) {
-            note.title = this.originalTitle;
+        cancelEditing() {
+            this.$emit('update:modelValue', this.originalTitle);
             this.isEditingIndex = "";
         }
     }
 }
 </script>
 <style lang="scss" scoped>
-.note-container {
-    display: flex;
-    justify-content: space-evenly;
-    flex-wrap: wrap;
-    margin: 16px;
-}
-.note-main {
-    position: relative;
-}
 .note {
     font-family: "Zhuan", sans-serif;
     font-weight: normal;
